@@ -1,66 +1,140 @@
 # Regen-pm-flow
 
-产品经理 AI 工作流 Skill 集合，覆盖「客户材料 → HTML 原型 → PRD → 交付」全链路。
+面向产品经理的 AI 工作流 Skill 集合，围绕「策略判断 → 原型生成 → PRD 交付 → 正式评审」组织，并支持“虚拟同事”作为上层协作能力接入。
 
-## 使用原则
+当前仓库维护的是 **本地 `.agents/skills` 下的 5 个核心 skill**，它们都可以独立作为入口使用，但推荐按工件流转组织成完整 workflow。
 
-1. 四个核心 skill 都是独立入口，任意一个都可以直接响应用户请求，不依赖其他 skill 先执行。
-2. 一次请求只选一个主 skill。其他 skill 只作为前置背景、后置校验或下一步建议，不要自动连环调用。
-3. skill 之间通过工件衔接，而不是通过硬编码依赖衔接。这里的工件包括：竞品洞察、结构化摘要、HTML 原型、PRD、评审结论。
-4. `regen-material2proto`、`regen-proto2prd` 是生产型 skill，负责生成正式产物；`regen-review-board`、`regen-competitor-deconstructor` 是辅助型 skill，负责提供判断、约束和修改建议。
-5. 每个 skill 在结束时只输出当前产物，并给出“推荐下一步”，不要擅自继续执行下一个 skill。
+## 当前本地 Skills
 
-## 标准执行流
+| Skill | 类型 | 用途 |
+|-------|------|------|
+| `regen-material2proto` | 生产型 | 会议纪要 / 微信聊天 / 客户文档 → 可交互 HTML 原型 |
+| `regen-proto2prd` | 生产型 | 定稿 HTML 原型 → 结构化 PRD |
+| `regen-review-board` | 辅助型 | 多角色评审 PRD / 原型 / 方案，输出阻断项、重要项、建议项 |
+| `regen-competitor-deconstructor` | 辅助型 | 做竞品拆解，输出差异化建议和行动清单 |
+| `regen-virtual-colleagues` | 协作型 | 为项目或话题绑定虚拟同事团队，在关键节点提供建议、发起圆桌讨论、沉淀工件 |
 
-### 主链路
+## 工作流原则
+
+1. 每个 skill 都是独立入口，不依赖其他 skill 先执行。
+2. 一次请求只选一个主 skill。其他 skill 只作为前置背景、后置校验或下一步建议。
+3. skill 之间通过工件衔接，而不是硬编码串联。
+4. `regen-material2proto`、`regen-proto2prd` 负责正式产物；`regen-review-board`、`regen-competitor-deconstructor` 负责判断和约束；`regen-virtual-colleagues` 负责项目级协作。
+5. 虚拟同事是可选增强层。没启用时，不影响主 workflow 正常使用。
+
+## 推荐工作流
+
+### 1. 标准主链路
 
 `regen-material2proto` → `regen-review-board`（可选，评原型） → `regen-proto2prd` → `regen-review-board`（推荐，评 PRD）
 
-### 策略前置链路
+适用场景：
+- 已有原始材料，希望快速出页面并最终交付研发
+
+### 2. 策略前置链路
 
 `regen-competitor-deconstructor` → `regen-material2proto` 或 `regen-proto2prd`
 
-### 快速场景
+适用场景：
+- 方向还没完全定，需要先看竞品、差异化和可借鉴点
+
+### 3. 虚拟同事增强链路
+
+`regen-virtual-colleagues` → 任一主 skill
+
+推荐接法：
+- 先用 `regen-virtual-colleagues` 给项目或话题绑定虚拟团队
+- 再进入 `regen-material2proto` / `regen-proto2prd` / `regen-review-board` / `regen-competitor-deconstructor`
+- 主 skill 在关键节点读取虚拟团队配置和意见工件，做“先讨论再执行”或“确认前提醒”
+
+适用场景：
+- 希望项目有持续陪跑的虚拟同事
+- 想围绕某个话题做圆桌讨论
+- 想把建议沉淀成项目工件，而不是一次性聊天
+
+## 快速入口
 
 - 只有原始材料，要先出页面：`regen-material2proto`
 - 已有 HTML 原型，要补 PRD：`regen-proto2prd`
-- 想看方案有没有问题：`regen-review-board`
+- 想正式评审方案：`regen-review-board`
 - 想先看竞品和差异化：`regen-competitor-deconstructor`
+- 想给项目配虚拟同事或开圆桌：`regen-virtual-colleagues`
 
 ## 工件流转表
 
 | Skill | 主要输入 | 主要输出 | 推荐下一步 |
 |-------|---------|---------|-----------|
+| `regen-virtual-colleagues` | 项目背景、话题、行业、团队配置意图 | 虚拟团队配置、同事建议、圆桌纪要、协作工件 | 回到对应主 skill 继续 |
 | `regen-competitor-deconstructor` | 竞品名单、分析目标、我方产品背景 | 竞品洞察、可借鉴点、差异化建议 | `regen-material2proto` 或 `regen-proto2prd` |
 | `regen-material2proto` | 原始材料、会议纪要、聊天记录、需求描述 | 结构化摘要、待确认事项、HTML 原型 | `regen-review-board` 或 `regen-proto2prd` |
 | `regen-proto2prd` | 已定稿 HTML 原型、原始材料 | 结构化 PRD、待确认事项 | `regen-review-board` |
-| `regen-review-board` | 原始材料、HTML 原型、PRD | 阻断项、重要项、建议项、复评清单 | 回到对应的生产型 skill 修改 |
+| `regen-review-board` | 原始材料、HTML 原型、PRD | 阻断项、重要项、建议项、复评清单 | 回到对应生产型 skill 修改 |
 
-## 核心工作流
+## 虚拟同事接入方式
 
-| Skill | 用途 |
-|-------|------|
-| `regen-material2proto` | 会议逐字稿 / 微信聊天 / 客户文档 → 可交互 HTML 原型 |
-| `regen-proto2prd` | 定稿原型 → 结构化 PRD 交付技术团队 |
-| `regen-prd-writer` | 从零撰写 PRD，支持传统应用 / AI 增强 / AI Agent 三种模板 |
+`regen-virtual-colleagues` 是当前 workflow 的上层协作层，不替代主 skill。
 
-## 辅助工具
+### 作用
 
-| Skill | 用途 |
-|-------|------|
-| `space-image2proto` | 截图 / 设计稿 → HTML 原型，带设计体系记忆 |
-| `space-url2proto` | 参考网站 → 本地 Next.js 原型工程 |
-| `regen-review-board` | 6 角色模拟 PRD 评审（产品/研发/测试/设计/运营/法务） |
-| `regen-competitor-deconstructor` | 四维竞品拆解（策略/功能/体验/增长） |
-| `pm-image2pencil` | 截图 → Pencil 设计稿 + 结构化设计文档 |
+- 给项目或话题绑定“真实行业人物映射”的虚拟同事
+- 在关键节点给建议
+- 支持切换“高频陪跑模式”
+- 支持围绕某个议题发起圆桌
+- 把意见落盘为 `json + md` 工件
 
-## 配套工具
+### 作用域
 
-| 工具 | 类型 | 用途 |
-|------|------|------|
-| [Web to Figma](https://gwrdluzl9j9.feishu.cn/wiki/TTibw3e8niWpvmkfSIWc8bUmnJc) | Chrome 插件 | 将网页直接转为 Figma 设计稿，配合原型迭代使用 |
-| [Liaison](https://chromewebstore.google.com/detail/liaison-ai-%E7%BC%96%E7%A8%8B%E5%AE%9A%E4%BD%8D%E3%80%81%E7%BD%91%E9%A1%B5%E6%A0%B7%E5%BC%8F%E7%BC%96%E8%BE%91%E4%B8%8E%E6%89%B9%E6%B3%A8/keeeahbnkkbengbjmmblmpgbccjeoebf) | Chrome 插件 | 网页样式可视化编辑与批注，导出结构化 Prompt 给 AI 开发协作 |
+- **项目级团队**：长期陪跑，跨多个主 skill 共享
+- **话题级团队**：围绕某个具体问题临时组队
+
+### 生效优先级
+
+`话题级 > 项目级 > 系统推荐`
+
+### 主 skill 读取规则
+
+如果项目或话题已启用虚拟同事，主 skill 按以下顺序读取配置：
+
+1. `.regen/topics/<topic-id>/virtual-team.json`
+2. `.regen/virtual-teams/project-team.json`
+
+并读取相关意见工件作为背景输入，但不把它们当成正式产物结论。
+
+## 目录与存储
+
+### Skills 目录
+
+本仓库的本地 skill 存放在：
+
+```text
+.agents/skills/
+```
+
+### 虚拟同事工件目录
+
+建议项目内使用：
+
+```text
+project/
+  .regen/
+    virtual-teams/
+      project-team.json
+      registry.json
+    topics/
+      <topic-id>/
+        virtual-team.json
+        opinions/
+        roundtables/
+```
 
 ## 使用方式
 
-将本仓库放置在工作目录，Cursor / Claude Code 会自动识别 `.claude/skills/` 下的 Skill 文件。
+1. 将本仓库放在工作目录中
+2. 确保本地 skill 位于 `.agents/skills/`
+3. 直接根据任务选择入口 skill
+4. 如果需要项目级协作，先启用 `regen-virtual-colleagues`
+5. 按工件流转继续进入对应主 skill
+
+## 当前 README 对齐范围
+
+本 README 只描述当前仓库内已经存在并维护的本地 skill 和它们之间的工作流关系，不再列出未在本仓库 `.agents/skills` 中维护的其他外部或全局 skill。
