@@ -158,6 +158,41 @@ project/
         roundtables/
 ```
 
+## 推荐搭配：Claude Design System Prompt
+
+`Claude-Design-Sys-Prompt.md` 是一份面向 HTML 设计产物的专业系统 prompt，强烈推荐在生成原型时使用。
+
+### 它是什么
+
+一份完整的"AI 设计师"行为规范，定义了从需求理解到最终交付的全流程工作方式，包括：
+
+- **设计工作流**：需求澄清 → 资源探索 → 规划 → 构建 → 验证 → 交付
+- **输出规范**：React + Babel 单文件 HTML、文件拆分策略、响应式适配、固定尺寸内容的自动缩放
+- **设计质量**：避免 AI 设计套路（过度渐变、emoji 滥用、通用字体）、要求基于设计系统产出、拒绝填充内容
+- **迭代能力**：Tweaks 机制让用户在原型内实时调参（颜色、字号、间距等），变更持久化到文件
+- **验证流程**：自动截图检查、控制台错误捕获、子 agent 交叉验证
+- **Starter Components**：开箱即用的设备边框、浏览器窗口、幻灯片壳、动画引擎等脚手架
+
+### 为什么推荐
+
+当前 `regen-prototype-html` 和 `regen-material2proto` 生成的 HTML 原型，本质上是 Claude 以 HTML 为媒介的设计产出。这份 prompt 能显著提升原型的：
+
+- **视觉质量**：告别"AI 味"，产出更接近真实产品设计师水准的界面
+- **交互还原度**：React 组件化 + 状态管理，支持复杂交互流程
+- **可迭代性**：Tweaks 面板让非技术人员也能直接调整设计参数
+- **工程规范**：版本管理、文件拆分、跨页面导航等工程实践内置
+
+### 怎么用
+
+在 Claude Code 的 `CLAUDE.md` 或 skill 中引用此文件，作为设计相关任务的上下文注入：
+
+```
+# CLAUDE.md 示例
+生成 HTML 原型时，参考 @Claude-Design-Sys-Prompt.md 的设计规范和工作流。
+```
+
+或在 `regen-prototype-html` / `regen-material2proto` 的 skill prompt 中增加对它的引用，确保每次生成原型时都遵循这些最佳实践。
+
 ## 使用方式
 
 1. 将本仓库放在工作目录中
