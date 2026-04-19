@@ -2,12 +2,13 @@
 
 面向产品经理的 AI 工作流 Skill 集合，围绕「策略判断 → 原型生成 → PRD 交付 → 正式评审」组织，并支持”虚拟同事”作为上层协作能力接入。
 
-当前仓库维护的是 **本地 `.claude/skills` 下的 6 个核心 skill**，它们都可以独立作为入口使用，但推荐按工件流转组织成完整 workflow。
+当前仓库维护的是 **本地 `.claude/skills` 下的 7 个核心 skill**，它们都可以独立作为入口使用，但推荐按工件流转组织成完整 workflow。
 
 ## 当前本地 Skills
 
 | Skill | 类型 | 用途 |
 |-------|------|------|
+| `regen-material2arch` | 解析型 | 会议纪要 / 微信聊天 / 客户文档 → Markdown 功能架构图 |
 | `regen-material2proto` | 生产型 | 会议纪要 / 微信聊天 / 客户文档 → 可交互 HTML 高保真原型 |
 | `regen-prototype-html` | 生产型 | 功能架构描述 / 架构图 → 中保真 HTML 原型（Notion 暖灰基座 + 场景设计规范） |
 | `regen-proto2prd` | 生产型 | 定稿 HTML 原型 → 结构化 PRD |
@@ -20,7 +21,7 @@
 1. 每个 skill 都是独立入口，不依赖其他 skill 先执行。
 2. 一次请求只选一个主 skill。其他 skill 只作为前置背景、后置校验或下一步建议。
 3. skill 之间通过工件衔接，而不是硬编码串联。
-4. `regen-material2proto`、`regen-proto2prd` 负责正式产物；`regen-review-board`、`regen-competitor-deconstructor` 负责判断和约束；`regen-virtual-colleagues` 负责项目级协作。
+4. `regen-material2arch` 负责材料解析；`regen-material2proto`、`regen-proto2prd` 负责正式产物；`regen-review-board`、`regen-competitor-deconstructor` 负责判断和约束；`regen-virtual-colleagues` 负责项目级协作。
 5. 虚拟同事是可选增强层。没启用时，不影响主 workflow 正常使用。
 
 ## 推荐工作流
@@ -31,6 +32,14 @@
 
 适用场景：
 - 已有原始材料，希望快速出页面并最终交付研发
+
+### 1.5 分步链路
+
+`regen-material2arch` → `regen-prototype-html` 或 `regen-material2proto`
+
+适用场景：
+- 材料比较复杂，想先理清架构再决定出什么保真度的原型
+- 需要把架构图单独拿去和客户/团队对齐
 
 ### 2. 策略前置链路
 
@@ -55,6 +64,7 @@
 
 ## 快速入口
 
+- 只有原始材料，想先理清架构：`regen-material2arch`
 - 只有原始材料，要先出页面：`regen-material2proto`
 - 有功能架构，要出中保真原型：`regen-prototype-html`
 - 已有 HTML 原型，要补 PRD：`regen-proto2prd`
@@ -68,6 +78,7 @@
 |-------|---------|---------|-----------|
 | `regen-virtual-colleagues` | 项目背景、话题、行业、团队配置意图 | 虚拟团队配置、同事建议、圆桌纪要、协作工件 | 回到对应主 skill 继续 |
 | `regen-competitor-deconstructor` | 竞品名单、分析目标、我方产品背景 | 竞品洞察、可借鉴点、差异化建议 | `regen-material2proto` 或 `regen-proto2prd` |
+| `regen-material2arch` | 原始材料、会议纪要、聊天记录、需求描述 | Markdown 功能架构图、待确认事项 | `regen-prototype-html` 或 `regen-material2proto` |
 | `regen-material2proto` | 原始材料、会议纪要、聊天记录、需求描述 | 结构化摘要、待确认事项、HTML 高保真原型 | `regen-review-board` 或 `regen-proto2prd` |
 | `regen-prototype-html` | 功能架构描述、架构图 | 中保真 HTML 原型 | `regen-review-board` 或 `regen-proto2prd` |
 | `regen-proto2prd` | 已定稿 HTML 原型、原始材料 | 结构化 PRD、待确认事项 | `regen-review-board` |
