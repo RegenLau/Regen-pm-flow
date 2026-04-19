@@ -8,7 +8,7 @@
 
 | Skill | 类型 | 用途 |
 |-------|------|------|
-| `regen-material2arch` | 解析型 | 会议纪要 / 微信聊天 / 客户文档 → Markdown 功能架构图 |
+| `regen-material2arch` | 解析型 | 会议纪要 / 微信聊天 / 客户文档 → Markdown 功能架构图（内置 28 个产品方法论框架，按材料信号自动匹配） |
 | `regen-material2proto` | 生产型 | 会议纪要 / 微信聊天 / 客户文档 → 可交互 HTML 高保真原型 |
 | `regen-prototype-html` | 生产型 | 功能架构描述 / 架构图 → 中保真 HTML 原型（Notion 暖灰基座 + 场景设计规范） |
 | `regen-proto2prd` | 生产型 | 定稿 HTML 原型 → 结构化 PRD |
@@ -78,7 +78,7 @@
 |-------|---------|---------|-----------|
 | `regen-virtual-colleagues` | 项目背景、话题、行业、团队配置意图 | 虚拟团队配置、同事建议、圆桌纪要、协作工件 | 回到对应主 skill 继续 |
 | `regen-competitor-deconstructor` | 竞品名单、分析目标、我方产品背景 | 竞品洞察、可借鉴点、差异化建议 | `regen-material2proto` 或 `regen-proto2prd` |
-| `regen-material2arch` | 原始材料、会议纪要、聊天记录、需求描述 | Markdown 功能架构图、待确认事项 | `regen-prototype-html` 或 `regen-material2proto` |
+| `regen-material2arch` | 原始材料、会议纪要、聊天记录、需求描述 | Markdown 功能架构图、方法论洞察、待确认事项 | `regen-prototype-html` 或 `regen-material2proto` |
 | `regen-material2proto` | 原始材料、会议纪要、聊天记录、需求描述 | 结构化摘要、待确认事项、HTML 高保真原型 | `regen-review-board` 或 `regen-proto2prd` |
 | `regen-prototype-html` | 功能架构描述、架构图 | 中保真 HTML 原型 | `regen-review-board` 或 `regen-proto2prd` |
 | `regen-proto2prd` | 已定稿 HTML 原型、原始材料 | 结构化 PRD、待确认事项 | `regen-review-board` |
@@ -113,6 +113,23 @@
 2. `.regen/virtual-teams/project-team.json`
 
 并读取相关意见工件作为背景输入，但不把它们当成正式产物结论。
+
+## 方法论框架库
+
+`regen-material2arch` 内置了 28 个产品方法论框架，按 10 个类别组织在 `frameworks/` 目录下，根据材料中的信号自动匹配（最多激活 3 个）：
+
+| 类别 | 框架 | 触发信号 |
+|------|------|----------|
+| 竞争分析 | 竞品分析框架、竞争定位地图、波特五力 | 提到竞品、对手、市场格局 |
+| 用户研究 | 用户画像、JTBD | 提到用户角色、用户类型 |
+| 用户旅程 | 用户旅程地图、用户故事地图、服务蓝图 | 提到操作流程、使用路径 |
+| 优先级 | RICE、MoSCoW、需求优先级四象限 | 提到优先级争论、先做后做 |
+| 商业模式 | 商业模式画布、精益画布、价值主张画布 | 提到盈利、收费、商业模式 |
+| 增长指标 | AARRR、北极星指标、增长飞轮 | 提到增长、留存、转化 |
+| 根因分析 | 5 Why、RCA、问题树 | 提到问题根因、为什么出问题 |
+| 创新策略 | 蓝海策略、SCAMPER、第一性原理 | 提到创新、差异化 |
+| MVP 验证 | 精益创业 MVP、假设验证板、PMF | 提到 MVP、最小可行 |
+| 工作流 | 事件风暴、服务蓝图 | 提到状态流转、审批流 |
 
 ## 目录与存储
 
